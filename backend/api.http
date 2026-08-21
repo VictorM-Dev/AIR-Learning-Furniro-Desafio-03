@@ -1,0 +1,26 @@
+@baseUrl = http://localhost:3000
+
+POST {{baseUrl}}/user/register
+Content-Type: application/json
+
+{
+  "email": "teste@email.com",
+  "password": "123456"
+}
+
+###
+POST {{baseUrl}}/user/login
+Content-Type: application/json
+
+{
+  "email": "teste@email.com",
+  "password": "123456"
+}
+
+//Created for develeper
+###
+GET {{baseUrl}}/user/allUser
+
+###
+DELETE {{baseUrl}}/user/allUser
+
