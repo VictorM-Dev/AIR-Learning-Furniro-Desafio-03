@@ -20,6 +20,14 @@ export default class PrismaProductCartRepository implements ProductCartRepositor
     });
   }
 
+  async removeProductCartById(productCartId: string): Promise<void> {
+    await this.prisma.productCart.delete({
+      where: {
+        id: productCartId,
+      },
+    });
+  }
+
   async removeAllProducts(userId: string): Promise<void> {
     const userExists = await this.prisma.user.findUnique({
       where: {

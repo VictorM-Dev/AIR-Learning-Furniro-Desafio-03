@@ -23,6 +23,15 @@ export default class ProductCartControlle {
     }
   }
 
+  async removeProductCartById(req: Request, res: Response, next: NextFunction){
+    try {
+      await this.productCartService.removeProductCartById(String(req.params.id));
+      res.json({message: "Product in cart successfully deleted"});
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async removeAllProducts(req: Request, res: Response, next: NextFunction) {
     try {
       await this.productCartService.removeAllProducts(req.userId);

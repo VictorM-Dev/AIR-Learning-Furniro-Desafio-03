@@ -10,5 +10,6 @@ export type ProductCartDTO = {
 
 export interface ProductCartRepository {
   addProductCart(productCard: ProductCartDTO): Promise<ProductCart>;
+  removeProductCartById(productCardId: string): Promise<void>
   removeAllProducts(userId: string): Promise<void>;
 }

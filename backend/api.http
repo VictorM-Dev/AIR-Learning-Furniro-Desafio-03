@@ -1,6 +1,5 @@
 @baseUrl = http://localhost:3000
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2YTg5OWExZDU4NGQ2NTg5ZmFlY2Y3NTIiLCJpYXQiOjE3ODc0MDI3ODQsImV4cCI6MTc4NzQ4OTE4NH0.P81d2Xe5p16Zxsh-1LpO4dPExyLQEcT964FZ08VSlks
-POST {{baseUrl}}/user/register
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2YTg5YzJjZmRmMWIxNzY2MWIxZWUxNjgiLCJpYXQiOjE3ODc0MTMyMDEsImV4cCI6MTc4NzQ5OTYwMX0.L22ffMWwKHt40U1jYOti1TxiEMNZR7ISCPEXdeSjgfs
 Content-Type: application/json
 
 {
@@ -40,9 +39,14 @@ Content-Type: application/json
   "productSlug": "refined-metal-0"
 }
 
+//REMOVE UM PRODUTO PELO ID DO PRODUTO (ROTA PROTEGIDA)
+###
+DELETE {{baseUrl}}/productCart/remove/6a89c2e1df1b17661b1ee169
+Authorization: Bearer {{token}}
+
 ###
 //REMOVE TODOS OS PRODUTOS DE TODOS OS USUÁRIOS (ROTA PROTEGIDA)
-DELETE {{baseUrl}}/productCart/remove
+DELETE {{baseUrl}}/productCart/remove/
 Authorization: Bearer {{token}}
 
 ### Request product by slug
