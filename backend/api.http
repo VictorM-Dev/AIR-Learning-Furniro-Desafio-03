@@ -1,5 +1,5 @@
 @baseUrl = http://localhost:3000
-
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2YTg5OWExZDU4NGQ2NTg5ZmFlY2Y3NTIiLCJpYXQiOjE3ODc0MDI3ODQsImV4cCI6MTc4NzQ4OTE4NH0.P81d2Xe5p16Zxsh-1LpO4dPExyLQEcT964FZ08VSlks
 POST {{baseUrl}}/user/register
 Content-Type: application/json
 
@@ -9,6 +9,7 @@ Content-Type: application/json
 }
 
 ###
+//LOGIN DO USUÁRIO
 POST {{baseUrl}}/user/login
 Content-Type: application/json
 
@@ -17,10 +18,34 @@ Content-Type: application/json
   "password": "123456"
 }
 
-//Created for develeper
 ###
+//RETORNA TODOS OS USUÁRIOS
 GET {{baseUrl}}/user/allUser
 
 ###
+//DELETA EM CASCATA TODOS OS USUÁRIOS
 DELETE {{baseUrl}}/user/allUser
 
+//Create for productCart
+###
+//ADICIONA UM PRODUTO AO USUÁRIO (ROTA PROTEGIDA)
+POST {{baseUrl}}/productCart/add
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "currentCount": 1,
+  "currentColor": "Black",
+  "currentSize": "M",
+  "productSlug": "refined-metal-0"
+}
+
+###
+//REMOVE TODOS OS PRODUTOS DE TODOS OS USUÁRIOS (ROTA PROTEGIDA)
+DELETE {{baseUrl}}/productCart/remove
+Authorization: Bearer {{token}}
+
+### Request product by slug
+###
+//RETORNA UM PRODUTO PELO SLUG
+GET {{baseUrl}}/products/refined-metal-0

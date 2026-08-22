@@ -17,11 +17,12 @@ export default class PrismaUserRepository implements UserRepository {
   }
 
   //Created for developer
-  async findAllUser(){
-    return this.prisma.user.findMany();
+  async findAllUser() {
+    return this.prisma.user.findMany({ include: { productsCart: true } });
   }
 
-  async deleteAllUser(): Promise<void>{
+  async deleteAllUser(): Promise<void> {
+    await this.prisma.productCart.deleteMany();
     await this.prisma.user.deleteMany();
   }
 }
