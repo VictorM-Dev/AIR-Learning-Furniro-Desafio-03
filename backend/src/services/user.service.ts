@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, NotFoundException } from "../middlewares/http-exception.middleware.js";
+import { BadRequestException, ConflictException, NotFoundException, UnauthorizedException } from "../middlewares/http-exception.middleware.js";
 import type { UserDTO, UserRepository } from "../repositories/user.repository.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -21,14 +21,14 @@ export default class UserService {
   async login(user: UserDTO) {
     const userExists = await this.userRepository.findByEmail(user.email);
     if (userExists == null) {
-      throw new NotFoundException("Invalid credentials!");
+      throw new UnauthorizedException("Invalid credentials!");
     }
     const passwordMatch = await bcrypt.compare(
       user.password,
       userExists.password,
     );
     if (!passwordMatch) {
-      throw new BadRequestException("Invalid credentials!");
+      throw new UnauthorizedException("Invalid credentials!");
     }
     const token = jwt.sign(
       {sub: userExists.id},
