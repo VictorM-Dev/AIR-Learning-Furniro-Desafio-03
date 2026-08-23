@@ -16,15 +16,15 @@ router.post("/add", authMiddleware, (req, res, next) => {
   productCartController.addProductCart(req, res, next);
 });
 
-router.delete("/remove/:id", authMiddleware, (req, res, next) => {
-  productCartController.removeProductCartById(req, res, next);
+router.delete("/remove/:slug", authMiddleware, (req, res, next) => {
+  productCartController.removeProductCartBySlug(req, res, next);
 });
 
 router.delete("/remove", authMiddleware, (req, res, next) => {
   productCartController.removeAllProducts(req, res, next);
 });
 
-router.put("/update/:id", authMiddleware, (req, res, next) => {
+router.put("/update/:slug", authMiddleware, (req, res, next) => {
   productCartController.updateProductCart(req, res, next);
 });
 

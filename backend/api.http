@@ -1,5 +1,5 @@
 @baseUrl = http://localhost:3000
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2YThhY2UyNTFiZWE1MGFhNWQ3NWQ5OWMiLCJpYXQiOjE3ODc0ODE2NDAsImV4cCI6MTc4NzU2ODA0MH0.5E6kwxWYT9vHnvq2bChy0syLkpmJnNeNr120bEM04Lw
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2YThiNTcyZjEzODRiNWM5ZDE3MmU4NWYiLCJpYXQiOjE3ODc1MTY3MjQsImV4cCI6MTc4NzYwMzEyNH0.E7b4eNiDPqACK891nMG2SHBQkdLlZW2hMflWYA_qr10
 Content-Type: application/json
 
 {
@@ -41,7 +41,7 @@ Content-Type: application/json
 
 ###
 //ATUALIZA UM PRODUTO EXISTENTE (ROTA PROTEGIDA)
-PUT {{baseUrl}}/productCart/update/6a8ad15052e1c3649c223884
+PUT {{baseUrl}}/productCart/update/refined-metal-0
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -54,7 +54,7 @@ Content-Type: application/json
 
 //REMOVE UM PRODUTO PELO ID DO PRODUTO (ROTA PROTEGIDA)
 ###
-DELETE {{baseUrl}}/productCart/remove/6a8ad15b52e1c3649c223885
+DELETE {{baseUrl}}/productCart/remove/refined-metal-0
 Authorization: Bearer {{token}}
 
 ###

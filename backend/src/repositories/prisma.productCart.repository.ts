@@ -8,10 +8,10 @@ import { NotFoundException } from "../middlewares/http-exception.middleware.js";
 export default class PrismaProductCartRepository implements ProductCartRepository {
   constructor(private prisma: PrismaClient) {}
 
-  async findById(id: string): Promise<ProductCart | null> {
+  async findBySlug(slug: string): Promise<ProductCart | null> {
     return this.prisma.productCart.findUnique({
       where: {
-        id,
+        productSlug: slug,
       },
     });
   }
@@ -28,10 +28,10 @@ export default class PrismaProductCartRepository implements ProductCartRepositor
     });
   }
 
-  async removeProductCartById(productCartId: string): Promise<void> {
+  async removeProductCartBySlug(slug: string): Promise<void> {
     await this.prisma.productCart.delete({
       where: {
-        id: productCartId,
+        productSlug: slug,
       },
     });
   }
@@ -54,16 +54,15 @@ export default class PrismaProductCartRepository implements ProductCartRepositor
     });
   }
 
-  async updateProductCart(productCart: ProductCart) {
+  async updateProductCart(productCart: ProductCartDTO) {
     return this.prisma.productCart.update({
       where: {
-        id: productCart.id,
+        productSlug: productCart.productSlug,
       },
       data: {
         currentColor: productCart.currentColor,
         currentCount: productCart.currentCount,
         currentSize: productCart.currentSize,
-        productSlug: productCart.productSlug,
       },
     });
   }

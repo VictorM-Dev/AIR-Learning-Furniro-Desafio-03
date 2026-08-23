@@ -12,22 +12,22 @@ export class ProductCartService {
     return this.productCartRepository.addProductCart(productCart);
   }
 
-  async removeProductCartById(productCartId: string) {
+  async removeProductCartBySlug(slug: string) {
     const productCartExists =
-      await this.productCartRepository.findById(productCartId);
+      await this.productCartRepository.findBySlug(slug);
     if (productCartExists === null) {
       throw new NotFoundException("Product not found!");
     }
-    return this.productCartRepository.removeProductCartById(productCartId);
+    return this.productCartRepository.removeProductCartBySlug(slug);
   }
 
   async removeAllProducts(userId: string) {
     return this.productCartRepository.removeAllProducts(userId);
   }
 
-  async updateProductCart(productCart: ProductCart) {
-    const productCartExists = await this.productCartRepository.findById(
-      productCart.id.toString(),
+  async updateProductCart(productCart: ProductCartDTO) {
+    const productCartExists = await this.productCartRepository.findBySlug(
+      productCart.productSlug.toString(),
     );
     if (productCartExists === null) {
       throw new NotFoundException("Product not found!");

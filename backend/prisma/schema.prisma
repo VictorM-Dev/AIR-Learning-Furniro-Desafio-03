@@ -34,7 +34,7 @@ model ProductCart {
   currentCount Int
   currentColor String
   currentSize  String
-  productSlug  String
+  productSlug  String   @unique
   userId       String   @db.ObjectId
   user         User     @relation(fields: [userId], references: [id])
 }

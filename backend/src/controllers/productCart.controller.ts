@@ -24,9 +24,9 @@ export default class ProductCartControlle {
     }
   }
 
-  async removeProductCartById(req: Request, res: Response, next: NextFunction){
+  async removeProductCartBySlug(req: Request, res: Response, next: NextFunction){
     try {
-      await this.productCartService.removeProductCartById(String(req.params.id));
+      await this.productCartService.removeProductCartBySlug(String(req.params.slug));
       res.json({message: "Product in cart successfully deleted"});
     } catch (error) {
       next(error);
@@ -46,13 +46,12 @@ export default class ProductCartControlle {
     try {
       const { currentCount, currentColor, currentSize, productSlug } =
         req.body;
-      const id = req.params.id as string;
+      const slug = req.params.slug as string;
       const productCart = await this.productCartService.updateProductCart({
-        id,
         currentCount,
         currentColor,
         currentSize,
-        productSlug,
+        productSlug: slug,
         userId: req.userId
       });
       res.json(productCart);
