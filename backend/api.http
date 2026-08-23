@@ -1,5 +1,5 @@
 @baseUrl = http://localhost:3000
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2YTg5YzJjZmRmMWIxNzY2MWIxZWUxNjgiLCJpYXQiOjE3ODc0MTMyMDEsImV4cCI6MTc4NzQ5OTYwMX0.L22ffMWwKHt40U1jYOti1TxiEMNZR7ISCPEXdeSjgfs
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2YThhY2UyNTFiZWE1MGFhNWQ3NWQ5OWMiLCJpYXQiOjE3ODc0ODE2NDAsImV4cCI6MTc4NzU2ODA0MH0.5E6kwxWYT9vHnvq2bChy0syLkpmJnNeNr120bEM04Lw
 Content-Type: application/json
 
 {
@@ -39,9 +39,22 @@ Content-Type: application/json
   "productSlug": "refined-metal-0"
 }
 
+###
+//ATUALIZA UM PRODUTO EXISTENTE (ROTA PROTEGIDA)
+PUT {{baseUrl}}/productCart/update/6a8ad15052e1c3649c223884
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "currentCount": 2,
+  "currentColor": "Red",
+  "currentSize": "M",
+  "productSlug": "refined-metal-0"
+}
+
 //REMOVE UM PRODUTO PELO ID DO PRODUTO (ROTA PROTEGIDA)
 ###
-DELETE {{baseUrl}}/productCart/remove/6a89c2e1df1b17661b1ee169
+DELETE {{baseUrl}}/productCart/remove/6a8ad15b52e1c3649c223885
 Authorization: Bearer {{token}}
 
 ###

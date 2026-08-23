@@ -24,4 +24,8 @@ router.delete("/remove", authMiddleware, (req, res, next) => {
   productCartController.removeAllProducts(req, res, next);
 });
 
+router.put("/update/:id", authMiddleware, (req, res, next) => {
+  productCartController.updateProductCart(req, res, next);
+});
+
 export { router as productCartRoutes };

@@ -1,4 +1,4 @@
-import type { PrismaClient } from "@prisma/client";
+import type { PrismaClient, ProductCart } from "@prisma/client";
 import type {
   ProductCartDTO,
   ProductCartRepository,
@@ -7,6 +7,14 @@ import { NotFoundException } from "../middlewares/http-exception.middleware.js";
 
 export default class PrismaProductCartRepository implements ProductCartRepository {
   constructor(private prisma: PrismaClient) {}
+
+  async findById(id: string): Promise<ProductCart | null> {
+    return this.prisma.productCart.findUnique({
+      where: {
+        id,
+      },
+    });
+  }
 
   async addProductCart(productCart: ProductCartDTO) {
     return this.prisma.productCart.create({
@@ -42,6 +50,20 @@ export default class PrismaProductCartRepository implements ProductCartRepositor
         user: {
           id: userId,
         },
+      },
+    });
+  }
+
+  async updateProductCart(productCart: ProductCart) {
+    return this.prisma.productCart.update({
+      where: {
+        id: productCart.id,
+      },
+      data: {
+        currentColor: productCart.currentColor,
+        currentCount: productCart.currentCount,
+        currentSize: productCart.currentSize,
+        productSlug: productCart.productSlug,
       },
     });
   }

@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import type { ProductCartService } from "../services/productCart.service.js";
 import type { ProductCartDTO } from "../repositories/productCart.repository.js";
+import { NotFoundException } from "../middlewares/http-exception.middleware.js";
 
 export default class ProductCartControlle {
   constructor(private productCartService: ProductCartService) {}
@@ -36,6 +37,25 @@ export default class ProductCartControlle {
     try {
       await this.productCartService.removeAllProducts(req.userId);
       res.json({message: "All products in user successfully deleted"});
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async updateProductCart(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { currentCount, currentColor, currentSize, productSlug } =
+        req.body;
+      const id = req.params.id as string;
+      const productCart = await this.productCartService.updateProductCart({
+        id,
+        currentCount,
+        currentColor,
+        currentSize,
+        productSlug,
+        userId: req.userId
+      });
+      res.json(productCart);
     } catch (error) {
       next(error);
     }
