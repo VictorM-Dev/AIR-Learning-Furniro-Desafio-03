@@ -58,33 +58,30 @@ const RightMenu = ({ className }: RightMenuProps) => {
       </div>
 
       <div
-        className={clsx("p-2 bg-white shadow-2xl", "absolute top-10 right-0", {
+        className={clsx("p-2 md:bg-white md:shadow-2xl max-md:mt-10", "md:absolute md:top-20 md:right-5", {
           hidden: !visible,
         })}
       >
-        <div
+        <button
           onClick={() => {
             localStorage.setItem("token", "");
             setLog(false);
           }}
+          className={clsx(
+            "bg-over-secundary p-3 py-2 uppercase font-semibold text-white font-poppins tracking-widest text-[14px] cursor-pointer",
+            { hidden: !log },
+          )}
         >
-          <button
-            className={clsx(
-              "bg-over-secundary p-3 py-2 uppercase font-semibold text-white font-poppins tracking-widest text-[14px] cursor-pointer",
-              { hidden: !log },
-            )}
-          >
-            Logout
-          </button>
-          <button
-            className={clsx(
-              "bg-over-secundary p-3 py-2 uppercase font-semibold text-white font-poppins tracking-widest text-[14px] cursor-pointer",
-              { hidden: log },
-            )}
-          >
-            <Link to={"/login"}>Login</Link>
-          </button>
-        </div>
+          Logout
+        </button>
+        <button
+          className={clsx(
+            "bg-over-secundary p-3 py-2 uppercase font-semibold text-white font-poppins tracking-widest text-[14px] cursor-pointer",
+            { hidden: log },
+          )}
+        >
+          <Link to={"/login"}>Login</Link>
+        </button>
       </div>
     </div>
   );
