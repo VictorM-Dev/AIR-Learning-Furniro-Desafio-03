@@ -36,6 +36,7 @@ const RightMenu = ({ className }: RightMenuProps) => {
   const [visibleCart, setVisibleCart] = useState(false);
   const handleCart = () => {
     setVisibleCart(!visibleCart);
+    setVisible(false);
   };
   return (
     <div className={clsx(className)}>

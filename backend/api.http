@@ -1,5 +1,8 @@
 @baseUrl = http://localhost:3000
 @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2YThiNTcyZjEzODRiNWM5ZDE3MmU4NWYiLCJpYXQiOjE3ODc1MTY3MjQsImV4cCI6MTc4NzYwMzEyNH0.E7b4eNiDPqACK891nMG2SHBQkdLlZW2hMflWYA_qr10
+//REGISTRAR USUÁRIO
+###
+POST {{baseUrl}}/user/register
 Content-Type: application/json
 
 {
@@ -41,7 +44,7 @@ Content-Type: application/json
 
 ###
 //ATUALIZA UM PRODUTO EXISTENTE (ROTA PROTEGIDA)
-PUT {{baseUrl}}/productCart/update/refined-metal-0
+PUT {{baseUrl}}/productCart/update/6a88b48d1ab47e9891f26386%3A%23000000%3AXS
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -58,8 +61,8 @@ DELETE {{baseUrl}}/productCart/remove/refined-metal-0
 Authorization: Bearer {{token}}
 
 ###
-//REMOVE TODOS OS PRODUTOS DE TODOS OS USUÁRIOS (ROTA PROTEGIDA)
-DELETE {{baseUrl}}/productCart/remove/
+//REMOVE TODOS OS PRODUTOS DE UM USUÁRIO (ROTA PROTEGIDA)
+DELETE {{baseUrl}}/productCart/removeAll/6a8b66368c5d6ba6d5b0de37
 Authorization: Bearer {{token}}
 
 ### Request product by slug

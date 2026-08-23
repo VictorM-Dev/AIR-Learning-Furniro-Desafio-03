@@ -35,7 +35,7 @@ export default class ProductCartControlle {
 
   async removeAllProducts(req: Request, res: Response, next: NextFunction) {
     try {
-      await this.productCartService.removeAllProducts(req.userId);
+      await this.productCartService.removeAllProducts(String(req.params.userId));
       res.json({message: "All products in user successfully deleted"});
     } catch (error) {
       next(error);
@@ -54,6 +54,17 @@ export default class ProductCartControlle {
         productSlug: slug,
         userId: req.userId
       });
+      res.json(productCart);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async findProductCartBySlug(req: Request, res: Response, next: NextFunction){
+    try {
+      const slug = req.params.slug as string;
+      const productCart = await this.productCartService.findProductCartBySlug(slug);
+      if(!productCart) throw new NotFoundException("Product in cart not found");
       res.json(productCart);
     } catch (error) {
       next(error);

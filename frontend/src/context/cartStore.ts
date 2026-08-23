@@ -18,20 +18,40 @@ export type AddCartItem = Omit<CartItem, "id">;
 
 type CartStore = {
   items: CartItem[];
-  addItem: (item: AddCartItem) => void;
+  addItem: (item: AddCartItem) => {};
   updateQuantity: (id: string, quantity: number) => void;
   removeItem: (id: string) => void;
 };
 
 const createItemId = (item: AddCartItem) =>
-  `${item.productId}:${item.color}:${item.size}`;
+  `${item.productId}:${item.color}:${item.size}`
+    .replace(/:/g, "DOISPONTOS")
+    .replace(/#/g, "HASHTAG");
+
+const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3000";
+const existsAuth = async () => {
+  const token = localStorage.getItem("token");
+  if (!token) return false;
+  const result = await fetch(`${API_URL}/user/authToken`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return result.ok;
+};
 
 export const useCartStore = create<CartStore>()(
   persist(
     (set) => ({
       items: [],
 
-      addItem: (item) =>
+      addItem: async (item) => {
+        const id = createItemId(item);
+
+        const current = useCartStore
+          .getState()
+          .items.find((item) => item.id === id);
+
         set((state) => {
           const id = createItemId(item);
           const existingItem = state.items.find((current) => current.id === id);
@@ -52,7 +72,48 @@ export const useCartStore = create<CartStore>()(
           }
 
           return { items: [...state.items, { ...item, id }] };
-        }),
+        });
+        if (await existsAuth()) {
+          const response = await fetch(
+            `${API_URL}/productCart/${createItemId(item)}`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            },
+          );
+          if (response.status === 404) {
+            await fetch(`${API_URL}/productCart/add`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+              body: JSON.stringify({
+                productSlug: createItemId(item),
+                currentColor: item.color,
+                currentCount: item.quantity,
+                currentSize: item.size,
+              }),
+            });
+          } else if (response.ok) {
+            await fetch(`${API_URL}/productCart/update/${createItemId(item)}`, {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+              body: JSON.stringify({
+                productSlug: createItemId(item),
+                currentColor: item.color,
+                currentCount: current!.quantity + item.quantity,
+                currentSize: item.size,
+              }),
+            });
+          }
+        }
+      },
 
       updateQuantity: (id, quantity) =>
         set((state) => ({

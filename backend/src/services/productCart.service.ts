@@ -34,4 +34,12 @@ export class ProductCartService {
     }
     return await this.productCartRepository.updateProductCart(productCart);
   }
+
+  async findProductCartBySlug(slug: string) {
+    const productCart = await this.productCartRepository.findBySlug(slug);
+    if (productCart === null) {
+      throw new NotFoundException("Product not found!");
+    }
+    return productCart;
+  }
 }
