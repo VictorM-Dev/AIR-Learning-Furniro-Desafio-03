@@ -1,28 +1,40 @@
 import clsx from "clsx";
 import Logo from "../../components/Logo";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import z from "zod";
 import background from "../../../public/Login/bg_login.jpg";
 import { MdEmail, MdLock } from "react-icons/md";
 
-const Login = () => {
+const Register = () => {
   const loginSchema = z.object({
     email: z.email("Invalid email"),
+    password: z
+      .string({
+        error: "Password required min 6 caracters",
+      })
+      .min(6, "Password is required"),
   });
   const navigate = useNavigate();
-  const handleLogin = async (email: string, password: string) => {
+  const handleRegister = async (email: string, password: string) => {
     const result = loginSchema.safeParse({
       email,
+      password
     });
 
-    if (!result.success) {
-      toast.error("Is not valid email!");
+    if (currentConfirmPassword !== currentPassword) {
+      toast.error("Passwords do not match");
       return;
     }
+
+    if (!result.success) {
+      toast.error(result.error.issues[0].message);
+      return;
+    }
+
     const local = import.meta.env.VITE_API_URL || "http://localhost:3000";
-    const response = await fetch(`${local}/user/login`, {
+    const response = await fetch(`${local}/user/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -38,13 +50,14 @@ const Login = () => {
       toast.error(error.error);
     } else {
       const data = await response.json();
-      localStorage.setItem("token", data.token);
-      navigate("/");
+      localStorage.setItem("token", JSON.stringify(data.token));
+      navigate("/login");
     }
   };
 
   const [currentEmail, setCurrentEmail] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
+  const [currentConfirmPassword, setCurrentConfirmPassword] = useState("");
 
   return (
     <>
@@ -72,7 +85,7 @@ const Login = () => {
             className={clsx("flex flex-col w-full gap-4")}
             onSubmit={(e) => {
               e.preventDefault();
-              handleLogin(currentEmail, currentPassword);
+              handleRegister(currentEmail, currentPassword);
             }}
           >
             <label className={clsx("flex flex-col relative")}>
@@ -113,24 +126,38 @@ const Login = () => {
                 }}
               />
             </label>
+            <label className={clsx("flex flex-col relative")}>
+              <h1>Confirm Password:</h1>
+              <MdLock
+                size={20}
+                className={clsx("absolute text-over-secundary right-0")}
+              />
+              <input
+                className={clsx(
+                  "outline-none bg-white p-2 w-full",
+                  "border-b border-over-secundary",
+                )}
+                type="password"
+                placeholder="confirm password"
+                required
+                value={currentConfirmPassword}
+                onChange={(e) => {
+                  setCurrentConfirmPassword(e.target.value);
+                }}
+              />
+            </label>
             <button
               type="submit"
               className={clsx(
                 "bg-over-secundary w-1/2 self-center p-2 text-white text-[16px] uppercase tracking-widest",
               )}
             >
-              Login
+              Sign Up
             </button>
           </form>
-          <h1>
-            Not registered yet?{" "}
-            <Link to="/register" className={clsx("font-bold")}>
-              Sign up
-            </Link>
-          </h1>
         </div>
       </div>
     </>
   );
 };
-export default Login;
+export default Register;
