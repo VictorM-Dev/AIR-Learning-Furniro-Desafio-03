@@ -1,4 +1,3 @@
-import IconArrowRight from "../../../public/Icons/dashicons_arrow.svg";
 import {Link} from "react-router-dom";
 import clsx from "clsx";
 
@@ -17,7 +16,7 @@ const MenuSingleProduct = ({ productName }: MenuSingleProductProps) => {
                     </Link>
                 </li>
                 <li>
-                    <img src={IconArrowRight} alt="seta" />
+                    <img src="Icons/dashicons_arrow.svg" alt="seta" />
                 </li>
                 <li>
                     <Link to="/shop">
@@ -25,7 +24,7 @@ const MenuSingleProduct = ({ productName }: MenuSingleProductProps) => {
                     </Link>
                 </li>
                 <li>
-                    <img src={IconArrowRight} alt="seta" />
+                    <img src="Icons/dashicons_arrow.svg" alt="seta" />
                 </li>
                 <li>
                     <h1 className={clsx("font-poppins font-regular text-[16px] text-black")}>

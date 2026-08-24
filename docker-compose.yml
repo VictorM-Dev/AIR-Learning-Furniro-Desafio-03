@@ -42,7 +42,7 @@ services:
         environment:
             NODE_ENV: development
             DATABASE_URL: mongodb://mongodb:27017/furniro?replicaSet=rs0&directConnection=true
-
+            JWT_SECRET: um_segredo_super_secreto_sobre_a_compass_e_a_AIR_Learning
         depends_on:
             mongo-init:
                 condition: service_completed_successfully

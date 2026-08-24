@@ -1,0 +1,75 @@
+@baseUrl = http://localhost:3000
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2YThiNTcyZjEzODRiNWM5ZDE3MmU4NWYiLCJpYXQiOjE3ODc1MTY3MjQsImV4cCI6MTc4NzYwMzEyNH0.E7b4eNiDPqACK891nMG2SHBQkdLlZW2hMflWYA_qr10
+//REGISTRAR USUÁRIO
+###
+POST {{baseUrl}}/user/register
+Content-Type: application/json
+
+{
+  "email": "teste@email.com",
+  "password": "123456"
+}
+
+###
+//LOGIN DO USUÁRIO
+POST {{baseUrl}}/user/login
+Content-Type: application/json
+
+{
+  "email": "teste@email.com",
+  "password": "123456"
+}
+
+###
+//RETORNA TODOS OS USUÁRIOS
+GET {{baseUrl}}/user/allUser
+
+###
+//DELETA EM CASCATA TODOS OS USUÁRIOS
+DELETE {{baseUrl}}/user/allUser
+
+//Create for productCart
+###
+//ADICIONA UM PRODUTO AO USUÁRIO (ROTA PROTEGIDA)
+POST {{baseUrl}}/productCart/add
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "currentCount": 1,
+  "currentColor": "Black",
+  "currentSize": "M",
+  "productSlug": "refined-metal-0"
+}
+
+###
+//ATUALIZA UM PRODUTO EXISTENTE (ROTA PROTEGIDA)
+PUT {{baseUrl}}/productCart/update/6a88b48d1ab47e9891f26386%3A%23000000%3AXS
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "currentCount": 2,
+  "currentColor": "Red",
+  "currentSize": "M",
+  "productSlug": "refined-metal-0"
+}
+
+//REMOVE UM PRODUTO PELO ID DO PRODUTO (ROTA PROTEGIDA)
+###
+DELETE {{baseUrl}}/productCart/remove/6a8c1870a327346c5a2c464bDOISPONTOSHASHTAGF5F5DCDOISPONTOSL
+Authorization: Bearer {{token}}
+
+###
+//REMOVE TODOS OS PRODUTOS DE UM USUÁRIO (ROTA PROTEGIDA)
+DELETE {{baseUrl}}/productCart/removeAll/6a8b66368c5d6ba6d5b0de37
+Authorization: Bearer {{token}}
+
+### Request product by slug
+###
+//RETORNA UM PRODUTO PELO SLUG
+GET {{baseUrl}}/products/refined-metal-0
+
+###
+GET {{baseUrl}}/products/id/6a8c1870a327346c5a2c464b
+Content-Type: application/json

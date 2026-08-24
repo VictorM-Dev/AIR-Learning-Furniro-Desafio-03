@@ -1,0 +1,35 @@
+import { PrismaClient } from "@prisma/client";
+import { Router } from "express";
+import PrismaProductCartRepository from "../repositories/prisma.productCart.repository.js";
+import { ProductCartService } from "../services/productCart.service.js";
+import ProductCartControlle from "../controllers/productCart.controller.js";
+import authMiddleware from "../middlewares/auth.middleware.js";
+
+const router = Router();
+
+const prisma = new PrismaClient();
+const productCartRepository = new PrismaProductCartRepository(prisma);
+const productCartService = new ProductCartService(productCartRepository);
+const productCartController = new ProductCartControlle(productCartService);
+
+router.post("/add", authMiddleware, (req, res, next) => {
+  productCartController.addProductCart(req, res, next);
+});
+
+router.delete("/remove/:slug", authMiddleware, (req, res, next) => {
+  productCartController.removeProductCartBySlug(req, res, next);
+});
+
+router.delete("/removeAll", authMiddleware, (req, res, next) => {
+  productCartController.removeAllProducts(req, res, next);
+});
+
+router.put("/update/:slug", authMiddleware, (req, res, next) => {
+  productCartController.updateProductCart(req, res, next);
+});
+
+router.get("/:slug", authMiddleware, (req, res, next) => {
+  productCartController.findProductCartBySlug(req, res, next);
+});
+
+export { router as productCartRoutes };
