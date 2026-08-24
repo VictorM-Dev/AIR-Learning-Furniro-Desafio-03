@@ -9,6 +9,7 @@ import Login from "./pages/login/page";
 import NotFoundPage from "./pages/NotFoundPage";
 import Layout from "./Layout/Layout";
 import Register from "./pages/register/page";
+import Checkout from "./pages/Checkout/page";
 
 const App = () => {
   return (
@@ -20,6 +21,7 @@ const App = () => {
           <Route path="/shop/:category?" element={<Shop />} />
           <Route path="/product/:slug" element={<Product />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
         <Route path="/login" element={<Login />} />
