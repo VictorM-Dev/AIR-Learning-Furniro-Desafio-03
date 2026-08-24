@@ -57,7 +57,7 @@ Content-Type: application/json
 
 //REMOVE UM PRODUTO PELO ID DO PRODUTO (ROTA PROTEGIDA)
 ###
-DELETE {{baseUrl}}/productCart/remove/refined-metal-0
+DELETE {{baseUrl}}/productCart/remove/6a8c1870a327346c5a2c464bDOISPONTOSHASHTAGF5F5DCDOISPONTOSL
 Authorization: Bearer {{token}}
 
 ###
@@ -69,3 +69,7 @@ Authorization: Bearer {{token}}
 ###
 //RETORNA UM PRODUTO PELO SLUG
 GET {{baseUrl}}/products/refined-metal-0
+
+###
+GET {{baseUrl}}/products/id/6a8c1870a327346c5a2c464b
+Content-Type: application/json

@@ -30,13 +30,14 @@ model Product {
 }
 
 model ProductCart {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  id           String @id @default(auto()) @map("_id") @db.ObjectId
   currentCount Int
   currentColor String
   currentSize  String
-  productSlug  String   @unique
-  userId       String   @db.ObjectId
-  user         User     @relation(fields: [userId], references: [id])
+  productSlug  String
+  userId       String @db.ObjectId
+  user User @relation(fields: [userId], references: [id])
+  @@unique([userId, productSlug])
 }
 
 model User {

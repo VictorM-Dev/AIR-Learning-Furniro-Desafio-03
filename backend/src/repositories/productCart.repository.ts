@@ -9,9 +9,9 @@ export type ProductCartDTO = {
 };
 
 export interface ProductCartRepository {
-  findBySlug(productCartSlug: string): Promise<ProductCart | null>;
+  findBySlug(userId: string, productCartSlug: string): Promise<ProductCart | null>;
   addProductCart(productCart: ProductCartDTO): Promise<ProductCart>;
-  removeProductCartBySlug(productCartSlug: string): Promise<void>
+  removeProductCartBySlug(userId: string, productCartSlug: string): Promise<void>
   removeAllProducts(userId: string): Promise<void>;
   updateProductCart(productCart: ProductCartDTO): Promise<ProductCart>;
 }

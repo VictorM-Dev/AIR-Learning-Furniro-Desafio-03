@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import z from "zod";
-import background from "../../../public/Login/bg_login.jpg";
 import { MdEmail, MdLock } from "react-icons/md";
 
 const Register = () => {
@@ -20,7 +19,7 @@ const Register = () => {
   const handleRegister = async (email: string, password: string) => {
     const result = loginSchema.safeParse({
       email,
-      password
+      password,
     });
 
     if (currentConfirmPassword !== currentPassword) {
@@ -68,7 +67,7 @@ const Register = () => {
           "bg-no-repeat bg-center bg-cover",
         )}
         style={{
-          backgroundImage: `url(${background})`,
+          backgroundImage: "url('/Login/bg_login.jpg')",
         }}
       >
         <div

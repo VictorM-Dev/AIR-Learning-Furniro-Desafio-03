@@ -1,5 +1,4 @@
 import clsx from "clsx";
-import shopClose from "../../../public/Icons/shopClose.svg";
 import { useCart } from "../../context/useCart";
 import NumberToStringRS from "../../utils/NumberToStringRS";
 import { MdClose } from "react-icons/md";
@@ -39,7 +38,7 @@ const SideCart = ({ visible, handle }: SideCartProps) => {
       <div className={clsx("flex justify-between items-center mb-6.5 px-6.5")}>
         <h1 className={clsx("text-[24px] font-semibold")}>Shopping Cart</h1>
         <img
-          src={shopClose}
+          src="/Icons/shopClose.svg"
           alt=""
           className={clsx("cursor-pointer")}
           onClick={handle}

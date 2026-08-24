@@ -4,7 +4,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import z from "zod";
-import background from "../../../public/Login/bg_login.jpg";
 import { MdEmail, MdLock } from "react-icons/md";
 import { useCart } from "../../context/useCart";
 import type { CartItem } from "../../context/cartStore";
@@ -50,7 +49,6 @@ const Login = () => {
       toast.error(error.error);
     } else {
       const data = await response.json();
-      console.log(data);
       localStorage.setItem("token", data.token);
       if (data.userExists.productsCart.length > 0) {
         clearItems();
@@ -77,7 +75,7 @@ const Login = () => {
               productId: product.id,
               name: product.name,
               slug: product.slug,
-              image: product.image[0],
+              image: product.images[0],
               color: item.currentColor,
               size: item.currentSize,
               quantity: item.currentCount,
@@ -107,7 +105,7 @@ const Login = () => {
           "bg-no-repeat bg-center bg-cover",
         )}
         style={{
-          backgroundImage: `url(${background})`,
+          backgroundImage: "url('/Login/bg_login.jpg')",
         }}
       >
         <div
