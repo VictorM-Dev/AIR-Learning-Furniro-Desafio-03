@@ -18,9 +18,12 @@ export type AddCartItem = Omit<CartItem, "id">;
 
 type CartStore = {
   items: CartItem[];
-  addItem: (item: AddCartItem) => {};
-  updateQuantity: (id: string, quantity: number) => void;
-  removeItem: (id: string) => void;
+  addItem: (item: AddCartItem) => Promise<void>;
+  updateQuantity: (id: string, quantity: number) => Promise<void>;
+  removeItem: (id: string) => Promise<void>;
+  setItems: (items: CartItem[]) => void;
+  clearItems: () => void;
+  syncLocalCart: () => Promise<void>;
 };
 
 const createItemId = (item: AddCartItem) =>
@@ -115,20 +118,87 @@ export const useCartStore = create<CartStore>()(
         }
       },
 
-      updateQuantity: (id, quantity) =>
+      updateQuantity: async (id, quantity) => {
+        const current = useCartStore
+          .getState()
+          .items.find((item) => item.id === id);
+
+        if (!current) return;
+
+        const newQuantity = Math.max(1, quantity);
+
         set((state) => ({
           items: state.items.map((item) =>
-            item.id === id
-              ? { ...item, quantity: Math.max(1, quantity) }
-              : item,
+            item.id === id ? { ...item, quantity: newQuantity } : item,
           ),
-        })),
+        }));
 
-      removeItem: (id) =>
+        if (await existsAuth()) {
+          await fetch(`${API_URL}/productCart/update/${id}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            body: JSON.stringify({
+              productSlug: id,
+              currentColor: current.color,
+              currentCount: newQuantity,
+              currentSize: current.size,
+            }),
+          });
+        }
+      },
+
+      removeItem: async (id) => {
+        const current = useCartStore
+          .getState()
+          .items.find((item) => item.id === id);
+
+        if (!current) return;
+
         set((state) => ({
           items: state.items.filter((item) => item.id !== id),
-        })),
+        }));
+
+        if (await existsAuth()) {
+          await fetch(`${API_URL}/productCart/remove/${id}`, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          });
+        }
+      },
+      setItems: (items) => {
+        set({ items });
+      },
+      clearItems: () => {
+        set({ items: [] });
+      },
+      syncLocalCart: async () => {
+        const token = localStorage.getItem("token");
+        const items = useCartStore.getState().items;
+
+        for (const item of items) {
+          await fetch(`${API_URL}/productCart/add`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              productSlug: item.id,
+              currentColor: item.color,
+              currentCount: item.quantity,
+              currentSize: item.size,
+            }),
+          });
+        }
+      },
     }),
+
     {
       name: "furniro-cart",
       partialize: (state) => ({ items: state.items }),

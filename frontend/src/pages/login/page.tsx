@@ -6,8 +6,21 @@ import toast from "react-hot-toast";
 import z from "zod";
 import background from "../../../public/Login/bg_login.jpg";
 import { MdEmail, MdLock } from "react-icons/md";
+import { useCart } from "../../context/useCart";
+import type { CartItem } from "../../context/cartStore";
+
+type ProductCartDTO = {
+  id: string;
+  userId: string;
+  productSlug: string;
+  currentColor: string;
+  currentCount: number;
+  currentSize: string;
+};
 
 const Login = () => {
+  const { setItems, clearItems, syncLocalCart } = useCart();
+
   const loginSchema = z.object({
     email: z.email("Invalid email"),
   });
@@ -32,13 +45,52 @@ const Login = () => {
         password,
       }),
     });
-
     if (!response.ok) {
       const error = await response.json();
       toast.error(error.error);
     } else {
       const data = await response.json();
+      console.log(data);
       localStorage.setItem("token", data.token);
+      if (data.userExists.productsCart.length > 0) {
+        clearItems();
+        const getProduct = async (item: ProductCartDTO) => {
+          const result = item.productSlug.match(/^(.+?)DOISPONTOS/)?.[1];
+          if (!result) {
+            throw new Error("Invalid productSlug");
+          }
+          const response = await fetch(`${local}/products/id/${result}`, {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+          if (!response.ok) {
+            throw new Error("Product not found");
+          }
+          return response.json();
+        };
+        const cartItems: CartItem[] = await Promise.all(
+          data.userExists.productsCart.map(async (item: ProductCartDTO) => {
+            const product = await getProduct(item);
+            const cartItem: CartItem = {
+              id: item.productSlug,
+              productId: product.id,
+              name: product.name,
+              slug: product.slug,
+              image: product.image[0],
+              color: item.currentColor,
+              size: item.currentSize,
+              quantity: item.currentCount,
+              price: product.price,
+              discountPrice: product.discountPrice,
+            };
+            return cartItem;
+          }),
+        );
+        setItems(cartItems);
+      } else {
+        await syncLocalCart();
+      }
       navigate("/");
     }
   };

@@ -9,7 +9,10 @@ export default class PrismaUserRepository implements UserRepository {
   }
 
   async findByEmail(email: string) {
-    return this.prisma.user.findUnique({ where: { email } });
+    return this.prisma.user.findUnique({
+      where: { email },
+      include: { productsCart: true },
+    });
   }
 
   async createUser(user: UserDTO) {
