@@ -20,7 +20,7 @@ router.delete("/remove/:slug", authMiddleware, (req, res, next) => {
   productCartController.removeProductCartBySlug(req, res, next);
 });
 
-router.delete("/removeAll/:userId", authMiddleware, (req, res, next) => {
+router.delete("/removeAll", authMiddleware, (req, res, next) => {
   productCartController.removeAllProducts(req, res, next);
 });
 

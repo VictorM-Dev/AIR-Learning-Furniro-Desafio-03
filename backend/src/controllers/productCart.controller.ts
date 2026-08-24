@@ -35,7 +35,7 @@ export default class ProductCartControlle {
 
   async removeAllProducts(req: Request, res: Response, next: NextFunction) {
     try {
-      await this.productCartService.removeAllProducts(String(req.params.userId));
+      await this.productCartService.removeAllProducts(String(req.userId));
       res.json({message: "All products in user successfully deleted"});
     } catch (error) {
       next(error);

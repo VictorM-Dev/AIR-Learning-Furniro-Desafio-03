@@ -12,12 +12,15 @@ Desafio Full Stack que recria a **Furniro**, uma loja de móveis e decoração. 
   - [Funcionalidades](#funcionalidades)
   - [Como funciona o Mosaico Animado](#como-funciona-o-mosaico-animado)
   - [Como funciona o Carrinho](#como-funciona-o-carrinho)
+  - [Como funciona o SideCart](#como-funciona-o-sidecart)
+- [Autenticação JWT](#autenticação-jwt)
 - [Backend](#backend)
   - [Tecnologias](#tecnologias-backend)
   - [Estrutura](#estrutura-backend)
   - [Rotas](#rotas)
   - [Middlewares](#middlewares)
   - [Seed do banco](#seed-do-banco)
+  - [Entidade ProductCart](#entidade-productcart)
 - [Docker](#docker)
 - [Como rodar](#como-rodar)
 - [Links](#links)
@@ -26,12 +29,16 @@ Desafio Full Stack que recria a **Furniro**, uma loja de móveis e decoração. 
 
 ## Preview
 
-A aplicação é composta por quatro páginas principais:
+A aplicação é composta por oito páginas principais:
 
 - **Home** — landing page com Hero, Categories, Our Products, Inspiration, Mosaic e Footer
 - **Shop** — listagem completa de produtos com filtros, paginação e categorias
 - **Product** — página dinâmica de produto individual via slug
-- **Cart** — carrinho de compras persistido no localStorage
+- **Cart** — carrinho de compras persistido no localStorage e sincronizado com o banco
+- **Login** — autenticação de usuário com JWT
+- **Register** — cadastro de novo usuário
+- **Checkout** — formulário de finalização de compra (protegido por autenticação)
+- **Contact** — formulário de contato (protegido por autenticação)
 
 ---
 
@@ -82,6 +89,10 @@ frontend/src/
 │   ├── Shop/page.tsx
 │   ├── Product/page.tsx
 │   ├── Cart/page.tsx
+│   ├── Login/page.tsx
+│   ├── Register/page.tsx
+│   ├── Checkout/page.tsx      # Protegida por JWT
+│   ├── Contact/page.tsx       # Protegida por JWT
 │   └── NotFoundPage/
 ├── services/
 │   ├── api.ts                # Instância Axios configurada
@@ -136,6 +147,18 @@ Enquanto o produto carrega, exibe um spinner. Se o slug não existir no banco, r
 
 Página de carrinho que lê o estado global do Zustand. Exibe os itens com controle de quantidade, remoção individual e o resumo com subtotal e total. O preço final já considera o `discountPrice` caso o produto tenha desconto.
 
+#### Login (`/login`) e Register (`/register`)
+
+Formulários de autenticação validados com **Zod** + **React Hook Form**. Após login bem-sucedido, o token JWT retornado pelo backend é salvo no `localStorage` e o usuário é redirecionado para a página anterior ou para `/`. O Register cria a conta e já autentica o usuário automaticamente.
+
+#### Checkout (`/checkout`)
+
+Formulário de finalização de compra com campos de endereço e pagamento, validado com Zod. A página verifica a autenticação via `GET /user/authToken` antes de renderizar — usuários não autenticados são redirecionados para `/login`.
+
+#### Contact (`/contact`)
+
+Formulário de contato com campos de nome, e-mail, assunto e mensagem, validado com Zod. Também protegida por autenticação JWT com o mesmo padrão de verificação do Checkout.
+
 ### Funcionalidades
 
 - **Responsivo** — layout adaptado para mobile, tablet e desktop
@@ -146,6 +169,9 @@ Página de carrinho que lê o estado global do Zustand. Exibe os itens com contr
 - **Hover nos cards** — overlay com ações de compartilhar, comparar e favoritar
 - **Filtros na Shop** — ordenação por preço, limite de itens por página e filtro por categoria
 - **Carrinho persistido** — estado do carrinho salvo no localStorage via Zustand `persist`
+- **SideCart** — painel lateral de carrinho sincronizado com localStorage e banco em tempo real
+- **Autenticação JWT** — login/registro com token armazenado no localStorage e validado pelo backend
+- **Rotas protegidas** — Checkout e Contact exigem autenticação, redirecionando para `/login` se não autenticado
 
 ### Como funciona o Mosaico Animado
 
@@ -183,6 +209,54 @@ const createItemId = (item: AddCartItem) =>
 ```
 
 Ao adicionar um item que já existe (mesmo produto, cor e tamanho), a quantidade é somada ao invés de criar uma entrada duplicada.
+
+### Como funciona o SideCart
+
+O **SideCart** é um painel lateral que abre sobre o conteúdo da página sem redirecionar o usuário. Ele exibe em tempo real os itens do carrinho e se mantém sincronizado com duas fontes de verdade simultaneamente: o **localStorage** (via Zustand `persist`) e o **banco de dados** (via API).
+
+**Sincronização dupla:** quando o usuário está autenticado, qualquer alteração no carrinho (adicionar, remover, alterar quantidade) é refletida imediatamente no estado local do Zustand e também enviada para o backend. Ao fazer login, o carrinho salvo no banco é carregado e mesclado com o estado local, garantindo que itens adicionados sem autenticação não sejam perdidos.
+
+**Abertura e fechamento:** o SideCart é controlado por um estado global no Zustand (`isOpen`). Qualquer componente pode abri-lo chamando `openCart()`, e ele fecha ao clicar fora do painel ou no botão de fechar.
+
+**Exibição:** dentro do SideCart cada item mostra imagem, nome, cor, tamanho, quantidade e preço unitário. O subtotal é calculado dinamicamente. Um link direto leva para a página `/cart` com o resumo completo e o botão de checkout.
+
+---
+
+## Autenticação JWT
+
+As páginas **Checkout** e **Contact** são protegidas — o usuário precisa estar autenticado para acessá-las. A autenticação é feita com **JWT (JSON Web Token)**.
+
+**Fluxo de autenticação:**
+
+1. O usuário se cadastra em `/register` ou faz login em `/login`.
+2. O backend valida as credenciais, gera um token JWT assinado e o retorna na resposta.
+3. O frontend armazena o token no `localStorage` e o inclui no header `Authorization: Bearer <token>` em todas as requisições autenticadas.
+4. O backend expõe o endpoint `GET /user/authToken` que valida o token e retorna `200 OK` se for válido ou `401` se estiver expirado/inválido.
+
+**Proteção de rotas no frontend:** as páginas protegidas verificam o token antes de renderizar o conteúdo. A verificação é assíncrona — enquanto aguarda a resposta do backend, exibe um `LoadingSpinner`. Se o token for inválido ou ausente, redireciona para `/login` via `<Navigate replace>`:
+
+```tsx
+const existsAuth = async () => {
+  const token = localStorage.getItem("token");
+  if (!token) return false;
+  const result = await fetch(`${API_URL}/user/authToken`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return result.ok;
+};
+
+// No componente:
+if (isAuthenticated === null) return <LoadingSpinner />;
+if (!isAuthenticated) return <Navigate to="/login" replace />;
+```
+
+**Rotas de usuário no backend:**
+
+| Método | Rota | Descrição | Auth |
+|---|---|---|---|
+| `POST` | `/user/register` | Cadastro de novo usuário | Não |
+| `POST` | `/user/login` | Login e geração do JWT | Não |
+| `GET` | `/user/authToken` | Validação do token | Sim |
 
 ---
 
@@ -296,6 +370,27 @@ slug: `${name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}-${i
 ```
 
 As imagens são servidas como arquivos estáticos pelo próprio Express (`/images/products/product-N.svg`) e referenciadas no banco apenas pelo path relativo. O frontend monta a URL completa concatenando com `VITE_API_URL`.
+
+### Entidade ProductCart
+
+Um dos desafios do carrinho foi que a entidade `Product` do banco contém muitos campos (imagens, descrição, categorias, tags, variantes, etc.) que são desnecessários para representar um item no carrinho. Salvar o produto inteiro em cada entrada do carrinho geraria redundância e acoplamento — qualquer alteração no produto quebraria os dados históricos do carrinho.
+
+**A solução** foi criar uma entidade separada `ProductCart`, que contém apenas os campos necessários para exibir e calcular o item no carrinho:
+
+```ts
+type ProductCart = {
+  productId: string;   // referência ao produto original
+  name: string;
+  image: string;       // apenas a imagem principal
+  price: number;
+  discountPrice?: number;
+  color: string;
+  size: string;
+  quantity: number;
+};
+```
+
+Essa entidade é criada no momento em que o usuário adiciona o produto ao carrinho — o frontend extrai apenas os campos relevantes do `Product` completo e envia somente esses dados para o backend. O banco armazena `ProductCart` vinculado ao usuário, sem duplicar a entidade `Product`. Isso mantém o carrinho leve, independente de alterações futuras no catálogo e compatível tanto com a persistência no `localStorage` quanto com a sincronização no banco.
 
 ---
 
