@@ -493,8 +493,4 @@ npm run dev
 
 ## Autores
 
-- Eros Franklin - https://github.com/ErosFranklin
-- Filipe Wanderley - https://github.com/filipe-wanderley
 - João Victor - https://github.com/VictorM-Dev
-- Lucas Trindade - https://github.com/lucastrdd
-- Vitória Medeiros - https://github.com/Vivimdrs
